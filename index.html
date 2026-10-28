@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisão PSS - Filosofia (Somatória)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header Header -->
+    <header class="bg-gradient-to-r from-brand-800 via-brand-700 to-indigo-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 sm:px-6 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2.5 rounded-xl backdrop-blur-md">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-amber-400"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl tracking-tight leading-tight">Revisão PSS - Filosofia</h1>
+                    <p class="text-xs text-blue-200">Questões no formato de somatória (UEPG/UFPR)</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center space-x-2 bg-white/10 px-3 py-1.5 rounded-lg text-xs font-medium">
+                <i class="fa-solid fa-check-double text-emerald-400"></i>
+                <span>Gabarito Comentado</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 sm:px-6 flex-grow w-full">
+
+        <!-- Intro Banner -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 mb-6 shadow-sm">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-ruler text-brand-600"></i> Instalações do Simulado
+                    </h2>
+                    <p class="text-sm text-slate-600">
+                        Selecione as alternativas que julgar <strong class="text-slate-800">corretas</strong> para calcular a soma automaticamente, ou insira o valor diretamente no campo <strong class="text-slate-800">"Soma"</strong>. Ao finalizar, clique no botão ao final da página para corrigir.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 self-stretch md:self-auto justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
+                    <button onclick="resetQuiz()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-right"></i> Limpar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <form id="quizForm" onsubmit="event.preventDefault(); evaluateQuiz();">
+            <div id="questionsContainer" class="space-y-6">
+                <!-- As questões serão injetadas via JavaScript -->
+            </div>
+
+            <!-- Action Bar -->
+            <div class="mt-8 mb-12 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-md">
+                <div class="text-sm text-slate-600 font-medium text-center sm:text-left">
+                    <span id="answeredCount" class="font-bold text-brand-600">0</span> de 6 questões respondidas
+                </div>
+                <button type="submit" id="btnSubmit" class="w-full sm:w-auto px-8 py-3.5 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-bold rounded-xl shadow-lg shadow-brand-500/30 transition-all flex items-center justify-center gap-2 text-base">
+                    <i class="fa-solid fa-paper-plane"></i> Verificar e Ver Explicações
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Modal / Section -->
+        <div id="resultCard" class="hidden bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden mb-8 transition-all">
+            <div id="resultHeader" class="p-6 text-white text-center">
+                <span class="inline-block p-3 rounded-full bg-white/20 mb-3 text-3xl" id="resultIcon">
+                    <i class="fa-solid fa-trophy"></i>
+                </span>
+                <h3 class="text-2xl font-black mb-1" id="resultTitle">Resultado da Revisão</h3>
+                <p class="text-sm opacity-90" id="resultSubtitle">Confira o seu desempenho e a análise do seu conhecimento</p>
+            </div>
+
+            <div class="p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Pontuação Final</span>
+                        <span class="text-3xl font-extrabold text-slate-800" id="scoreDisplay">0.0</span>
+                        <span class="text-xs text-slate-500 block mt-1">de 6.0 pontos</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Aproveitamento</span>
+                        <span class="text-3xl font-extrabold text-brand-600" id="percentageDisplay">0%</span>
+                        <span class="text-xs text-slate-500 block mt-1">de acerto global</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Questões Gabaritadas</span>
+                        <span class="text-3xl font-extrabold text-emerald-600" id="perfectDisplay">0/6</span>
+                        <span class="text-xs text-slate-500 block mt-1">acertos totais sem erros</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button onclick="scrollToExplanaions()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-sm rounded-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-down"></i> Analisar Explicações Abaixo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-5xl mx-auto px-4">
+            <p class="font-medium text-slate-600 mb-1">Material Pedagógico de Apoio ao PSS - Filosofia</p>
+            <p>Desenvolvido para revisão e fixação de conteúdos de vestibulares no formato de somatória.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Code -->
+    <script>
+        // Dados das Questões
+        const questionsData = [
+            {
+                id: 1,
+                title: "1) Sobre o período antropológico da filosofia grega antiga, assinale o que for correto.",
+                options: [
+                    { val: 1, text: "Nesse período, os filósofos naturalistas eram os protagonistas do novo formato de investigação filosófica.", correct: false, exp: "Incorreto: Os filósofos naturalistas pertencem ao período pré-socrático (cosmológico), não ao antropológico." },
+                    { val: 2, text: "O foco da investigação filosófica estava voltado estritamente à busca pela arché.", correct: false, exp: "Incorreto: A busca pela arché é a característica central da cosmologia pré-socrática." },
+                    { val: 4, text: "Esse período é caracterizado pela reflexão filosófica concernente à vida do homem.", correct: true, exp: "Correto: O período antropológico (com Sócrates e os sofistas) volta-se para a ética, a política, a essência e a vida humana na pólis." },
+                    { val: 8, text: "No contexto desse período histórico, Sócrates desenvolveu reflexões filosóficas com o intuito de compreender e estudar a essência do homem.", correct: true, exp: "Correto: Sócrates coloca o homem no centro de suas investigações (\"conhece-te a ti mesmo\")." }
+                ],
+                correctSum: 12
+            },
+            {
+                id: 2,
+                title: "2) Sobre a questão da moralidade e das relações sociais, assinale o que for correto.",
+                options: [
+                    { val: 1, text: "A moral faz parte de qualquer sociedade humana.", correct: true, exp: "Correto: Toda sociedade humana estabelece regras, costumes e princípios morais para viabilizar o convívio." },
+                    { val: 2, text: "A existência da moral nas relações sociais pressupõe direitos e deveres.", correct: true, exp: "Correto: A convivência moral estabelece o equilíbrio entre os deveres com a comunidade e os direitos individuais." },
+                    { val: 4, text: "A moral é necessária para a organização da conduta individual e social.", correct: true, exp: "Correto: A moral serve como guia de conduta necessário para harmonizar ações individuais e coletivas." },
+                    { val: 8, text: "A conduta de um indivíduo em sociedade é regulada pela moral.", correct: true, exp: "Correto: Normas morais orientam e regulam o comportamento das pessoas em sociedade." }
+                ],
+                correctSum: 15
+            },
+            {
+                id: 3,
+                title: "3) Sobre os métodos e os princípios da ciência moderna, assinale o que for correto.",
+                options: [
+                    { val: 1, text: "No século XVII, o modo de investigar a natureza tinha sua fundamentação científica no saber contemplativo.", correct: false, exp: "Incorreto: A ciência moderna rompeu com o saber meramente contemplativo/teórico da Idade Média e da Antiguidade, adotando uma postura prática e experimental." },
+                    { val: 2, text: "A ciência moderna é operativa.", correct: true, exp: "Correto: A ciência moderna é operativa, voltada para a aplicação prática, técnica e transformação da realidade." },
+                    { val: 4, text: "Conforme os princípios da ciência moderna, o conhecimento científico é a ferramenta essencial para que o homem consiga dominar a natureza e intervir nela.", correct: true, exp: "Correto: Francis Bacon e outros pensadores modernos viam o conhecimento como poder (\"saber é poder\") para dominar e transformar a natureza em benefício humano." },
+                    { val: 8, text: "René Descartes considerou o conhecimento matemático como algo primordial para a ciência natural.", correct: true, exp: "Correto: Descartes defendeu a matematização da natureza e do método científico (mecanicismo e racionalismo)." }
+                ],
+                correctSum: 14
+            },
+            {
+                id: 4,
+                title: "4) Sobre a busca da arché, conforme as ideias de Tales de Mileto, assinale o que for correto.",
+                options: [
+                    { val: 1, text: "Tudo é água, e por isso a água é o elemento principiador de todos os seres.", correct: true, exp: "Correto: Para Tales, a água é a substância primordial de onde tudo se origina e se mantém." },
+                    { val: 2, text: "Tales de Mileto estabeleceu a arché como sendo o ápeiron.", correct: false, exp: "Incorreto: Quem estabeleceu o ápeiron (o indeterminado) como arché foi Anaximandro, não Tales." },
+                    { val: 4, text: "O filósofo Tales de Mileto apresenta uma concepção monista no que se refere à arché.", correct: true, exp: "Correto: Tales é monista pois defende um único elemento essencial/princípio (a água)." },
+                    { val: 8, text: "Para Tales, não era possível definir um único elemento como princípio originador de todos os seres.", correct: false, exp: "Incorreto: Tales definiu sim um único elemento (a água), portanto essa afirmativa nega o monismo de Tales." }
+                ],
+                correctSum: 5
+            },
+            {
+                id: 5,
+                title: "5) Sobre as características das cidades-Estado gregas, especificamente de Atenas, assinale o que for correto.",
+                options: [
+                    { val: 1, text: "A pólis tem seu surgimento vinculado à necessidade da busca por resoluções de cunho racional para os problemas da vida social.", correct: true, exp: "Correto: A pólis surge vinculada ao debate público, à discussão teórica e à busca de soluções racionais para os problemas da comunidade." },
+                    { val: 2, text: "Em Atenas, não existiam meios legais para a prática da discussão política em praças públicas, por isso essa prática não ocorria na pólis.", correct: false, exp: "Incorreto: Na ágora (praça pública) de Atenas, a discussão política era praticada legalmente pelos cidadãos (isegoria/isonomia)." },
+                    { val: 4, text: "As discussões políticas que ocorriam em Atenas eram baseadas em argumentações essencialmente mitológicas.", correct: false, exp: "Incorreto: A política ateniense substituiu as explicações mitológicas pela argumentação racional e discursiva." },
+                    { val: 8, text: "As discussões políticas que eram realizadas em praça pública contribuíram significativamente para o firmamento do logos como base das reflexões filosóficas.", correct: true, exp: "Correto: O debate público em praça pública estimulou a argumentação lógica e a consolidação do logos na filosofia e na política." }
+                ],
+                correctSum: 9
+            },
+            {
+                id: 6,
+                title: "6) Sobre a experiência do pensamento filosófico, assinale o que for correto.",
+                options: [
+                    { val: 1, text: "Uma das características do exercício do pensamento filosófico é a atitude crítica.", correct: true, exp: "Correto: A atitude crítica (questionamento de certezas e preconceitos) é o pilar da filosofia." },
+                    { val: 2, text: "A maiêutica socrática pode ser compreendida como um método filosófico que objetiva levar o sujeito a construir uma visão crítica do mundo.", correct: true, exp: "Correto: A maiêutica socrática \"partura\" ideias mediante o diálogo e estimula o pensamento crítico e autônomo." },
+                    { val: 4, text: "No aspecto filosófico, pensar é algo simples e que se assemelha ao senso comum.", correct: false, exp: "Incorreto: O pensamento filosófico exige rigor, reflexão sistemática e distanciamento das opiniões ingênuas e do senso comum." },
+                    { val: 8, text: "A ação de problematizar questões cotidianas é um ato que vai contra o pensamento filosófico e se aproxima do senso comum.", correct: false, exp: "Incorreto: Problematizar o cotidiano é justamente a atitude própria do filosofar, opondo-se ao automatismo do senso comum." }
+                ],
+                correctSum: 3
+            }
+        ];
+
+        // Renderizar questões na tela
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questionsData.forEach((q) => {
+                const qCard = document.createElement('div');
+                qCard.className = "bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm transition-all relative overflow-hidden";
+                qCard.id = `qCard_${q.id}`;
+
+                let optionsHtml = '';
+                q.options.forEach(opt => {
+                    const formattedVal = opt.val < 10 ? `0${opt.val}` : opt.val;
+                    optionsHtml += `
+                        <div class="option-item flex items-start space-x-3 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200 cursor-pointer" onclick="toggleOption(${q.id}, ${opt.val})">
+                            <input type="checkbox" id="q_${q.id}_opt_${opt.val}" value="${opt.val}" 
+                                class="mt-1 w-5 h-5 text-brand-600 rounded border-slate-300 focus:ring-brand-500 transition cursor-pointer"
+                                onclick="event.stopPropagation(); updateSumFromCheckboxes(${q.id})"
+                            >
+                            <label for="q_${q.id}_opt_${opt.val}" class="text-sm font-medium text-slate-700 leading-relaxed cursor-pointer select-none flex-1">
+                                <span class="font-bold text-brand-700 mr-1.5">${formattedVal})</span> ${opt.text}
+                            </label>
+                        </div>
+                        <div id="exp_q${q.id}_${opt.val}" class="hidden ml-8 mr-2 mb-2 p-3 text-xs rounded-lg font-medium border"></div>
+                    `;
+                });
+
+                qCard.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-4 gap-2">
+                        <h3 class="font-bold text-slate-800 text-base sm:text-lg leading-snug">${q.title}</h3>
+                        <div id="statusBadge_${q.id}" class="hidden px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap"></div>
+                    </div>
+
+                    <div class="space-y-1 mb-5">
+                        ${optionsHtml}
+                    </div>
+
+                    <!-- Input de Soma e Painel da Questão -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="text-xs text-slate-500 font-medium text-center sm:text-left">
+                            Selecione os itens acima ou digite o resultado da soma direta no campo ao lado.
+                        </div>
+
+                        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                            <label for="sum_q${q.id}" class="text-xs font-bold text-slate-700 uppercase tracking-wide whitespace-nowrap">Soma Digita/Calculada:</label>
+                            <input type="number" id="sum_q${q.id}" min="0" max="15" placeholder="0"
+                                class="w-20 px-3 py-2 text-center font-extrabold text-slate-800 text-lg bg-white border border-slate-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                                oninput="updateCheckboxesFromSum(${q.id})"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Banner de Feedback da Questão (Invisível no início) -->
+                    <div id="feedback_q${q.id}" class="hidden mt-4 p-4 rounded-xl text-sm border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    </div>
+                `;
+
+                container.appendChild(qCard);
+            });
+        }
+
+        // Alternar seleção da opção ao clicar no container
+        function toggleOption(qId, val) {
+            const checkbox = document.getElementById(`q_${qId}_opt_${val}`);
+            checkbox.checked = !checkbox.checked;
+            updateSumFromCheckboxes(qId);
+        }
+
+        // Atualizar input de Soma com base nas checkboxes marcadas
+        function updateSumFromCheckboxes(qId) {
+            const q = questionsData.find(item => item.id === qId);
+            let total = 0;
+            q.options.forEach(opt => {
+                const cb = document.getElementById(`q_${qId}_opt_${opt.val}`);
+                if (cb && cb.checked) {
+                    total += opt.val;
+                }
+            });
+
+            const sumInput = document.getElementById(`sum_q${qId}`);
+            sumInput.value = total > 0 ? total : '';
+
+            updateAnsweredCounter();
+        }
+
+        // Atualizar Checkboxes se o aluno digitar o valor direto na caixa de soma
+        function updateCheckboxesFromSum(qId) {
+            const sumInput = document.getElementById(`sum_q${qId}`);
+            let val = parseInt(sumInput.value, 10);
+
+            if (isNaN(val) || val < 0) val = 0;
+            if (val > 15) {
+                val = 15;
+                sumInput.value = 15;
+            }
+
+            const q = questionsData.find(item => item.id === qId);
+            
+            // Decodificar bitwise/soma (15 = 1+2+4+8)
+            q.options.forEach(opt => {
+                const cb = document.getElementById(`q_${qId}_opt_${opt.val}`);
+                if (cb) {
+                    cb.checked = (val & opt.val) === opt.val;
+                }
+            });
+
+            updateAnsweredCounter();
+        }
+
+        // Contador de Respondidas
+        function updateAnsweredCounter() {
+            let answered = 0;
+            questionsData.forEach(q => {
+                const sumVal = document.getElementById(`sum_q${q.id}`).value;
+                if (sumVal !== '' && parseInt(sumVal, 10) >= 0) {
+                    answered++;
+                }
+            });
+            document.getElementById('answeredCount').textContent = answered;
+        }
+
+        // Avaliar e Corrigir o Simulado
+        function evaluateQuiz() {
+            let totalScore = 0;
+            let perfectCount = 0;
+
+            questionsData.forEach(q => {
+                const sumInput = document.getElementById(`sum_q${q.id}`);
+                const studentSum = parseInt(sumInput.value, 10) || 0;
+                const correctSum = q.correctSum;
+
+                // Calcular pontuação individual conforme regra padrão de somatória
+                // Se errou marcando alternativa incorreta, zera ou ganha parcial se não marcou nenhuma errada
+                let score = calculateUFPRScore(q, studentSum);
+                totalScore += score;
+
+                if (score === 1.0) {
+                    perfectCount++;
+                }
+
+                // Exibir Badge do Status
+                const badge = document.getElementById(`statusBadge_${q.id}`);
+                badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-amber-100', 'text-amber-800', 'bg-rose-100', 'text-rose-800');
+                
+                if (score === 1.0) {
+                    badge.classList.add('bg-emerald-100', 'text-emerald-800');
+                    badge.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correta (+1.0)`;
+                } else if (score > 0) {
+                    badge.classList.add('bg-amber-100', 'text-amber-800');
+                    badge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Parcial (+${score.toFixed(2)})`;
+                } else {
+                    badge.classList.add('bg-rose-100', 'text-rose-800');
+                    badge.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorreta (0.0)`;
+                }
+
+                // Exibir Feedback Box
+                const fbBox = document.getElementById(`feedback_q${q.id}`);
+                fbBox.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-amber-50', 'border-amber-200', 'text-amber-900', 'bg-rose-50', 'border-rose-200', 'text-rose-900');
+                
+                let fbText = '';
+                if (studentSum === correctSum) {
+                    fbBox.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                    fbText = `<strong>Excelente!</strong> Sua soma foi <strong>${studentSum}</strong> e corresponde exatamente ao gabarito oficial!`;
+                } else {
+                    fbBox.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+                    fbText = `Sua soma: <strong>${studentSum}</strong> | Soma Correta: <strong class="text-emerald-700">${correctSum}</strong>. Confira as explicações de cada item abaixo.`;
+                }
+                fbBox.innerHTML = `<span>${fbText}</span>`;
+
+                // Mostrar Explicação detalhada de cada alternativa
+                q.options.forEach(opt => {
+                    const expDiv = document.getElementById(`exp_q${q.id}_${opt.val}`);
+                    expDiv.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-800', 'bg-rose-50', 'border-rose-200', 'text-rose-800');
+
+                    if (opt.correct) {
+                        expDiv.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                        expDiv.innerHTML = `<i class="fa-solid fa-check text-emerald-600 mr-1.5"></i> ${opt.exp}`;
+                    } else {
+                        expDiv.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
+                        expDiv.innerHTML = `<i class="fa-solid fa-xmark text-rose-600 mr-1.5"></i> ${opt.exp}`;
+                    }
+                });
+            });
+
+            // Exibir Painel de Resultado
+            showResultCard(totalScore, perfectCount);
+        }
+
+        // Cálculo de pontuação proporcional para Somatórias (Método de acertos/erros)
+        function calculateUFPRScore(q, studentSum) {
+            let studentBits = [
+                (studentSum & 1) === 1,
+                (studentSum & 2) === 2,
+                (studentSum & 4) === 4,
+                (studentSum & 8) === 8
+            ];
+
+            let correctBits = [
+                (q.correctSum & 1) === 1,
+                (q.correctSum & 2) === 2,
+                (q.correctSum & 4) === 4,
+                (q.correctSum & 8) === 8
+            ];
+
+            let incorrectMarked = false;
+            let correctMarkedCount = 0;
+            let totalCorrectOptions = 0;
+
+            for (let i = 0; i < 4; i++) {
+                if (correctBits[i]) totalCorrectOptions++;
+                
+                if (studentBits[i] && !correctBits[i]) {
+                    incorrectMarked = true; // Marcou uma falsa
+                }
+                if (studentBits[i] && correctBits[i]) {
+                    correctMarkedCount++; // Marcou uma verdadeira
+                }
+            }
+
+            // Se marcou alguma incorreta, a questão é zerada (regra padrão para segurança conceitual no PSS)
+            if (incorrectMarked) return 0.0;
+
+            // Pontuação proporcional caso não tenha marcado nenhuma incorreta
+            return parseFloat((correctMarkedCount / totalCorrectOptions).toFixed(2));
+        }
+
+        // Mostrar Placar Final
+        function showResultCard(score, perfects) {
+            const card = document.getElementById('resultCard');
+            const header = document.getElementById('resultHeader');
+            const icon = document.getElementById('resultIcon');
+            const title = document.getElementById('resultTitle');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const percentageDisplay = document.getElementById('percentageDisplay');
+            const perfectDisplay = document.getElementById('perfectDisplay');
+
+            const percentage = Math.round((score / 6.0) * 100);
+
+            scoreDisplay.textContent = score.toFixed(1);
+            percentageDisplay.textContent = `${percentage}%`;
+            perfectDisplay.textContent = `${perfects}/6`;
+
+            header.className = "p-6 text-white text-center transition-colors ";
+            if (percentage >= 80) {
+                header.classList.add('bg-gradient-to-r', 'from-emerald-600', 'to-teal-700');
+                icon.innerHTML = `<i class="fa-solid fa-trophy"></i>`;
+                title.textContent = "Excelente Desempenho!";
+            } else if (percentage >= 50) {
+                header.classList.add('bg-gradient-to-r', 'from-amber-500', 'to-orange-600');
+                icon.innerHTML = `<i class="fa-solid fa-award"></i>`;
+                title.textContent = "Bom Trabalho!";
+            } else {
+                header.classList.add('bg-gradient-to-r', 'from-rose-600', 'to-red-700');
+                icon.innerHTML = `<i class="fa-solid fa-book-open"></i>`;
+                title.textContent = "Precisa de Mais Revisão";
+            }
+
+            card.classList.remove('hidden');
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Rolar até o início da primeira questão após o resultado
+        function scrollToExplanaions() {
+            document.getElementById('questionsContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Limpar tudo
+        function resetQuiz() {
+            document.getElementById('quizForm').reset();
+            
+            // Ocultar feedbacks e exibições
+            document.getElementById('resultCard').classList.add('hidden');
+            
+            questionsData.forEach(q => {
+                document.getElementById(`statusBadge_${q.id}`).classList.add('hidden');
+                document.getElementById(`feedback_q${q.id}`).classList.add('hidden');
+                
+                q.options.forEach(opt => {
+                    document.getElementById(`exp_q${q.id}_${opt.val}`).classList.add('hidden');
+                });
+            });
+
+            updateAnsweredCounter();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Inicializar aplicação ao carregar janela
+        window.onload = function() {
+            renderQuestions();
+            updateAnsweredCounter();
+        };
+    </script>
+</body>
+</html>
